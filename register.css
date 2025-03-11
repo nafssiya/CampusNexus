@@ -1,0 +1,56 @@
+body {
+    background-color: #000;
+    font-family: Arial, sans-serif;
+}
+.container {
+    padding: 20px;
+    max-width: 500px;
+    margin: 100px auto;
+    background-color: #333;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 5px #fff;
+}
+.tabs {
+    display: flex;
+    justify-content: space-between;
+}
+.tabs button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+}
+.tabs button:hover {
+    background-color: #666;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+}
+form label {
+    font-size: 18px;
+}
+form input, form select {
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+form button {
+    padding: 10px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+}
+form button:hover {
+    background-color: #218838;
+}
+

@@ -1,0 +1,65 @@
+<!DOCTYPE html>  
+<html lang="en">  
+    <head>  
+        <meta charset="UTF-8">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <title>Registration & Login</title>  
+        <link rel="stylesheet" href="register.css">  
+    </head>  
+    <body>  
+        <div class="container">
+            <h2>Register</h2>
+            <form action="/register" method="post">
+                <label for="role">Role:</label>
+                <select id="role" name="role">
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="parent">Parent</option>
+                </select>
+                
+                <label for="regd_no">Registration Number (for students/faculty) / Student's Reg. No (for parents):</label>
+                <input type="text" id="regd_no" name="regd_no" required>
+                
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob">
+
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label for="blood_group">Blood Group:</label>
+                <input type="text" id="blood_group" name="blood_group">
+
+                <label for="program">Program:</label>
+                <input type="text" id="program" name="program">
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div class="container">
+            <h2>Login</h2>
+            <form action="/login" method="post">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </body>  
+</html>

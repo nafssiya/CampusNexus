@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Activity Certificates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+        }
+        input, button, select {
+            margin: 10px;
+            padding: 10px;
+            font-size: 18px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .verify-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .verify-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verify Activity Certificates</h1>
+        <form action="/submit-activity-verification" method="POST">
+            <label for="student-regd-no">Enter Student Registration Number:</label>
+            <input type="text" name="student-regd-no" id="student-regd-no" required>
+            <br>
+            <button type="button" onclick="fetchCertificates()">Fetch Certificates</button>
+        </form>
+
+        <div id="certificate-table">
+            <!-- The fetched certificates will be displayed here -->
+        </div>
+        
+        <br>
+        <a href="/faculty">Back to Dashboard</a>
+    </div>
+
+    <script>
+        function fetchCertificates() {
+            const regdNo = document.getElementById('student-regd-no').value;
+
+            // Fetch certificates from server
+            fetch(`/get-certificates?regd_no=${regdNo}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.certificates && data.certificates.length > 0) {
+                        let table = `<table>
+                            <thead>
+                                <tr>
+                                    <th>Activity Type</th>
+                                    <th>Certificate</th>
+                                    <th>Points</th>
+                                    <th>Verify</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                        
+                        data.certificates.forEach(cert => {
+                            table += `<tr>
+                                <td>${cert.activityType}</td>
+                                <td><a href="${cert.certificateUrl}" target="_blank">View Certificate</a></td>
+                                <td>${cert.points}</td>
+                                <td>
+                                    <button class="verify-btn" onclick="verifyCertificate('${cert._id}')">Verify</button>
+                                </td>
+                            </tr>`;
+                        });
+
+                        table += `</tbody></table>`;
+                        document.getElementById('certificate-table').innerHTML = table;
+                    } else {
+                        document.getElementById('certificate-table').innerHTML = '<p>No certificates found for this student.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching certificates:', error);
+                    document.getElementById('certificate-table').innerHTML = '<p>Failed to fetch certificates. Please try again.</p>';
+                });
+        }
+
+        function verifyCertificate(certId) {
+            fetch(`/verify-certificate?id=${certId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Certificate verified successfully!');
+                        fetchCertificates();  // Refresh the certificate list
+                    } else {
+                        alert('Failed to verify certificate.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verifying certificate:', error);
+                    alert('An error occurred while verifying the certificate.');
+                });
+        }
+    </script>
+</body>
+</html>

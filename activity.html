@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Upload and View Certificates</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('activity.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: rgba(255, 255, 255, 0.7); /* Adjusted transparency */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        form {
+            margin-bottom: 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group input[type="file"] {
+            padding: 5px;
+        }
+        .btn {
+            padding: 12px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .table-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .total-marks {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            color: #333;
+        }
+        /* Prize Conditional Mark Field */
+        .form-group#prizeMarkField {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload Activity Certificates</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="activityName">Activity Name</label>
+            <input type="text" id="activityName" name="activityName" required>
+        </div>
+        <div class="form-group">
+            <label for="dateOfCertification">Date of Certification</label>
+            <input type="date" id="dateOfCertification" name="dateOfCertification" required>
+        </div>
+        <div class="form-group">
+            <label for="courseDuration">Course Duration (in days)</label>
+            <input type="number" id="courseDuration" name="courseDuration" required>
+        </div>
+        <div class="form-group">
+            <label for="certificateFile">Upload Certificate</label>
+            <input type="file" id="certificateFile" name="certificateFile" accept="application/pdf,image/*" required>
+        </div>
+        <div class="form-group">
+            <label for="correspondingPoints">Corresponding Points</label>
+            <input type="number" id="correspondingPoints" name="correspondingPoints" required>
+        </div>
+        <div class="form-group">
+            <label for="prize">Prize (Optional)</label>
+            <select id="prize" name="prize">
+                <option value="">-- Select Prize --</option>
+                <option value="First">First Prize</option>
+                <option value="Second">Second Prize</option>
+                <option value="Third">Third Prize</option>
+            </select>
+        </div>
+        <div class="form-group" id="prizeMarkField">
+            <label for="prizeMark">Marks for Prize</label>
+            <input type="number" id="prizeMark" name="prizeMark">
+        </div>
+        <div class="form-group">
+            <label for="level">Level</label>
+            <input type="text" id="level" name="level" placeholder=" " required>
+        </div>
+        <button type="submit" class="btn">Upload Certificate</button>
+    </form>
+
+    <div class="table-container">
+        <h2>Uploaded Certificates</h2>
+        <table id="certificatesTable">
+            <thead>
+                <tr>
+                    <th>Activity Name</th>
+                    <th>Date of Certification</th>
+                    <th>Course Duration</th>
+                    <th>Points</th>
+                    <th>Prize</th>
+                    <th>Prize Marks</th>
+                    <th>Level</th>
+                    <th>Certificate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Certificates will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div class="total-marks">
+            Total Points: <span id="totalMarks">0</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const uploadForm = document.getElementById('uploadForm');
+    const certificatesTable = document.getElementById('certificatesTable').getElementsByTagName('tbody')[0];
+    const totalMarksElement = document.getElementById('totalMarks');
+    const prizeField = document.getElementById('prize');
+    const prizeMarkField = document.getElementById('prizeMarkField');
+    const prizeMarkInput = document.getElementById('prizeMark');
+    let totalMarks = 0;
+
+    // Show prize mark field if a prize is selected
+    prizeField.addEventListener('change', function () {
+        if (prizeField.value !== "") {
+            prizeMarkField.style.display = "block";
+            prizeMarkInput.setAttribute("required", "required");
+        } else {
+            prizeMarkField.style.display = "none";
+            prizeMarkInput.removeAttribute("required");
+            prizeMarkInput.value = "";  // Clear if prize unselected
+        }
+    });
+
+    // Handle form submission
+    uploadForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const formData = new FormData(uploadForm);
+
+        // Post the form data to the backend
+        const response = await fetch('/upload-certificate', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const newCertificate = await response.json();
+            addCertificateToTable(newCertificate);
+            uploadForm.reset(); // Reset form after successful upload
+            prizeMarkField.style.display = "none"; // Hide prize mark field after reset
+        } else {
+            alert("Error uploading certificate. Please try again.");
+        }
+    });
+
+    // Function to add a certificate to the table and update total marks
+    function addCertificateToTable(certificate) {
+        const row = certificatesTable.insertRow();
+        row.innerHTML = `
+            <td>${certificate.activityName}</td>
+            <td>${certificate.dateOfCertification}</td>
+            <td>${certificate.courseDuration} days</td>
+            <td>${certificate.correspondingPoints}</td>
+            <td>${certificate.prize || 'N/A'}</td>
+            <td>${certificate.prizeMark || 'N/A'}</td>
+            <td>${certificate.level}</td>
+            <td><a href="${certificate.certificateFile}" target="_blank">View Certificate</a></td>
+        `;
+        totalMarks += certificate.correspondingPoints + (certificate.prizeMark || 0);
+        totalMarksElement.textContent = totalMarks;
+    }
+
+    // Fetch and display certificates on page load
+    async function loadCertificates() {
+        const response = await fetch('/get-certificates');
+        const certificates = await response.json();
+        certificates.forEach(addCertificateToTable);
+    }
+
+    loadCertificates(); // Load certificates when the page loads
+</script>
+
+</body>
+</html>

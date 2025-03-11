@@ -1,0 +1,195 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #001f3d; /* Dark Blue Background */
+            padding: 20px;
+            color: white;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        h1 {
+            font-size: 1.8em;
+            color: #fff;
+        }
+        .role-select {
+            margin-bottom: 20px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .section {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .section.active {
+            display: block;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .options button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background-color: #45a049;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #777;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        #certificate-list {
+            margin-top: 20px;
+        }
+        #certificate-list div {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        #certificate-list h3 {
+            font-size: 1.2em;
+        }
+        .welcome-message {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .sidebar-image {
+            background-image: url('path/to/your/image.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            width: 40%;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Student Dashboard</h1>
+    <div class="welcome-message">
+        Hello, <span id="username">User</span>! Welcome to the Student Dashboard.
+    </div>
+</header>
+
+
+<div class="role-select">
+    <label for="role">Select Role:</label>
+    <select id="role" onchange="displayRoleOptions()">
+        <option value="">Select Role</option>
+        <option value="student">Student</option>
+    </select>
+</div>
+
+<!-- Sections for Student -->
+<div id="student-section" class="section">
+    <h2>Student Dashboard</h2>
+    <div class="options">
+        <button onclick="uploadActivity()">Upload Activity Certificates</button>
+        <button onclick="viewCertificates()">View Certificates</button>
+        <button onclick="viewPoints()">View Activity Points</button>
+        <button onclick="viewAttendance()">View Attendance</button>
+        
+    </div>
+
+    <!-- Certificates List -->
+    <div id="certificate-list" class="certificate-list"></div>
+</div>
+
+<footer>
+    <p>&copy; 2025 University System. All rights reserved.</p>
+</footer>
+
+<script>
+    const studentId = 'your_student_id_here'; // Replace with logged-in student's ID
+
+    function displayRoleOptions() {
+        const selectedRole = document.getElementById('role').value;
+        const sections = document.querySelectorAll('.section');
+        
+        // Hide all sections
+        sections.forEach(section => section.classList.remove('active'));
+        
+        // Show selected role section
+        if (selectedRole) {
+            document.getElementById(`${selectedRole}-section`).classList.add('active');
+        }
+    }
+
+    function uploadActivity() {
+        window.location.href = 'activity.html';  // Redirect to activity upload page
+    }
+
+    function viewCertificates() {
+        fetch(`/view-certificates/${studentId}`)
+            .then(response => response.json())
+            .then(certificates => {
+                const certificateList = document.getElementById('certificate-list');
+                certificateList.innerHTML = '';
+
+                certificates.forEach(cert => {
+                    const certDiv = document.createElement('div');
+                    certDiv.classList.add('certificate-item');
+                    certDiv.innerHTML = `
+                        <h4>${cert.certificateName}</h4>
+                        <p>Date: ${new Date(cert.certificateDate).toLocaleDateString()}</p>
+                        <p>Level: ${cert.level || 'N/A'}</p>
+                        <p>Prize: ${cert.prize || 'N/A'}</p>
+                        <p>Mark: ${cert.mark || 'N/A'}</p>
+                        <a href="${cert.certificateFile}" target="_blank">View Certificate</a>
+                    `;
+                    certificateList.appendChild(certDiv);
+                });
+            });
+    }
+
+    function viewPoints() {
+        alert("Functionality under development");
+    }
+
+    function viewAttendance() {
+        alert("Functionality under development");
+    }
+</script>
+
+</body>
+</html>

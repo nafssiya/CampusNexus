@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Attendance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f7;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Upload Attendance</h2>
+
+<form id="attendance-form">
+    <div class="form-group">
+        <label for="subjectName">Subject Name:</label>
+        <input type="text" id="subjectName" name="subjectName" placeholder="Enter Subject Name" required>
+    </div>
+    <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+    </div>
+    <div class="form-group">
+        <label for="hour">Hour Number:</label>
+        <input type="number" id="hour" name="hour" min="1" max="8" placeholder="Enter Hour Number (1-8)" required>
+    </div>
+
+    <!-- Student Attendance Section -->
+    <table>
+        <thead>
+            <tr>
+                <th>Student Roll No</th>
+                <th>Present</th>
+                <th>Absent</th>
+            </tr>
+        </thead>
+        <tbody id="student-attendance">
+            <!-- Example Student Row -->
+            <tr>
+                <td>1</td>
+                <td><input type="checkbox" class="present-checkbox"></td>
+                <td><input type="checkbox" class="absent-checkbox"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td><input type="checkbox" class="present-checkbox"></td>
+                <td><input type="checkbox" class="absent-checkbox"></td>
+            </tr>
+            <!-- More students can be added dynamically -->
+        </tbody>
+    </table>
+
+    <button type="button" onclick="addStudentRow()">Add Student</button>
+
+    <div class="form-group">
+        <button type="submit">Submit Attendance</button>
+    </div>
+</form>
+
+<!-- After Attendance Submission -->
+<h2>Attendance Summary</h2>
+<table id="attendance-summary" style="display: none;">
+    <thead>
+        <tr>
+            <th>Subject Name</th>
+            <th>Date</th>
+            <th>Hour Number</th>
+            <th>Student Roll No</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Summary Rows Will Be Added Here -->
+    </tbody>
+</table>
+
+<script>
+    let studentCount = 2; // Start with 2 students as default
+
+    // Function to add a new student row dynamically
+    function addStudentRow() {
+        studentCount++; // Increment the student count for new student
+
+        const tableBody = document.getElementById('student-attendance');
+        const newRow = document.createElement('tr');
+
+        const studentRollNoCell = document.createElement('td');
+        studentRollNoCell.textContent = studentCount; // Label student with incremented roll number
+        newRow.appendChild(studentRollNoCell);
+
+        const presentCell = document.createElement('td');
+        const presentCheckbox = document.createElement('input');
+        presentCheckbox.type = 'checkbox';
+        presentCheckbox.className = 'present-checkbox';
+        presentCell.appendChild(presentCheckbox);
+        newRow.appendChild(presentCell);
+
+        const absentCell = document.createElement('td');
+        const absentCheckbox = document.createElement('input');
+        absentCheckbox.type = 'checkbox';
+        absentCheckbox.className = 'absent-checkbox';
+        absentCell.appendChild(absentCheckbox);
+        newRow.appendChild(absentCell);
+
+        tableBody.appendChild(newRow);
+    }
+
+    // Handle form submission
+    document.getElementById('attendance-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const subjectName = document.getElementById('subjectName').value;
+        const date = document.getElementById('date').value;
+        const hour = document.getElementById('hour').value;
+
+        const summaryTable = document.getElementById('attendance-summary');
+        const summaryBody = summaryTable.querySelector('tbody');
+        summaryBody.innerHTML = ''; // Clear previous summary
+
+        const rows = document.querySelectorAll('#student-attendance tr');
+        rows.forEach((row) => {
+            const studentRollNo = row.cells[0].textContent;
+            const isPresent = row.querySelector('.present-checkbox').checked;
+            const isAbsent = row.querySelector('.absent-checkbox').checked;
+
+            const status = isPresent ? 'Present' : isAbsent ? 'Absent' : 'No Status';
+
+            const summaryRow = document.createElement('tr');
+            summaryRow.innerHTML = `
+                <td>${subjectName}</td>
+                <td>${date}</td>
+                <td>${hour}</td>
+                <td>${studentRollNo}</td>
+                <td>${status}</td>
+            `;
+            summaryBody.appendChild(summaryRow);
+        });
+
+        summaryTable.style.display = 'block'; // Show the summary table
+    });
+</script>
+
+</body>
+</html>
